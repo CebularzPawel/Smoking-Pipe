@@ -3,6 +3,7 @@ package net.cebularz.smokingpipe.events;
 import net.cebularz.smokingpipe.SmokingPipe;
 import net.cebularz.smokingpipe.particles.ModParticles;
 import net.cebularz.smokingpipe.particles.custom.SmokeCircleParticleProvider;
+import net.minecraft.client.particle.SpellParticle;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -13,5 +14,8 @@ public class ModClientEvents {
     @SubscribeEvent
     public static void registerParticleFactories(RegisterParticleProvidersEvent event) {
         event.registerSpriteSet(ModParticles.SMOKE_CIRCLE.get(), SmokeCircleParticleProvider::new);
+
+        event.registerSpriteSet(ModParticles.WISDOM_PARTICLE.get(), SpellParticle.Provider::new);
+
     }
 }

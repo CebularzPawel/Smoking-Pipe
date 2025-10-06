@@ -1,5 +1,6 @@
 package net.cebularz.smokingpipe;
 
+import net.cebularz.smokingpipe.effects.ModEffects;
 import net.cebularz.smokingpipe.items.ModItems;
 import net.cebularz.smokingpipe.particles.ModParticles;
 import org.slf4j.Logger;
@@ -30,7 +31,9 @@ public class SmokingPipe {
 
         ModItems.register(modEventBus);
 
-        ModParticles.PARTICLES.register(modEventBus);
+        ModParticles.register(modEventBus);
+
+        ModEffects.register(modEventBus);
 
         NeoForge.EVENT_BUS.register(this);
 

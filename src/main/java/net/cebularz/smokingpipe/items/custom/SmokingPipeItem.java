@@ -1,15 +1,21 @@
 package net.cebularz.smokingpipe.items.custom;
 
+import net.cebularz.smokingpipe.effects.ModEffects;
 import net.cebularz.smokingpipe.particles.ModParticles;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
+
+import java.util.Objects;
 
 public class SmokingPipeItem extends Item {
     public SmokingPipeItem(Properties properties) {
@@ -44,7 +50,9 @@ public class SmokingPipeItem extends Item {
 
         // spawn every 10 ticks (0.5s)
         if (entity.tickCount % 20 == 0) {
-
+            if (entity instanceof Player player){
+                addWisdomEffect(player);
+            }
             // Distance in front of the face (pipe tip)
             double distance = 0.3;
 
@@ -66,12 +74,24 @@ public class SmokingPipeItem extends Item {
             double dy = 0.02;
             double dz = 0.0;
 
-            for(int i =0; i<4;i++) {
+            for(int i =0; i< 1 + level.random.nextInt(3);i++) {
                 level.addParticle(ModParticles.SMOKE_CIRCLE.get(),
                         x, y, z,
                         dx, dy, dz);
             }
         }
     }
+    private void addWisdomEffect(Player player){
+        if (player.hasEffect(MobEffects.ABSORPTION)){
 
+            MobEffectInstance wisdomEffect = Objects.requireNonNull(player.getEffect(MobEffects.ABSORPTION));
+            int wisdomDuration = wisdomEffect.getDuration();
+            player.addEffect(new MobEffectInstance(MobEffects.ABSORPTION,wisdomDuration+200));
+
+        }
+        else {
+            player.addEffect(new MobEffectInstance(ModEffects.WISDOM_EFFECT,200,0,false,true));
+
+        }
+    }
 }
