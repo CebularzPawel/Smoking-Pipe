@@ -2,6 +2,7 @@ package net.cebularz.smokingpipe.items.custom;
 
 import net.cebularz.smokingpipe.effects.ModEffects;
 import net.cebularz.smokingpipe.particles.ModParticles;
+import net.minecraft.core.Holder;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
@@ -24,6 +25,7 @@ public class SmokingPipeItem extends Item {
 
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand usedHand) {
+
         ItemStack itemstack = player.getItemInHand(usedHand);
         player.startUsingItem(usedHand);
         player.getCooldowns().addCooldown(this, 10);
@@ -41,35 +43,36 @@ public class SmokingPipeItem extends Item {
         return UseAnim.TOOT_HORN;
     }
 
-    // Called every tick while the player is holding right-click
+
     @Override
     public void onUseTick(Level level, LivingEntity entity, ItemStack stack, int remainingUseDuration) {
+
         if (!level.isClientSide) {
-            return; // particles should only spawn on the client
+            if (entity.tickCount % 20 == 0) {
+                if (entity instanceof LivingEntity player) {
+                    MobEffectInstance mobEffectInstance = new MobEffectInstance(ModEffects.WISDOM_EFFECT, 200);
+                    player.addEffect(mobEffectInstance);
+                }
+            }
+            return;
         }
 
-        // spawn every 10 ticks (0.5s)
         if (entity.tickCount % 20 == 0) {
-            if (entity instanceof Player player){
-                addWisdomEffect(player);
-            }
-            // Distance in front of the face (pipe tip)
+
             double distance = 0.3;
 
-            // Convert rotation to radians
             float yawRad = (float) Math.toRadians(entity.yRotO);
             float pitchRad = (float) Math.toRadians(entity.xRotO);
 
-            // Calculate forward offset
             double offsetX = -Math.sin(yawRad) * Math.cos(pitchRad) * distance;
-            double offsetY = -Math.sin(pitchRad) * distance + 0.1; // slightly above mouth
+            double offsetY = -Math.sin(pitchRad) * distance + 0.1;
             double offsetZ = Math.cos(yawRad) * Math.cos(pitchRad) * distance;
 
             double x = entity.getX() + offsetX;
             double y = entity.getEyeY() + offsetY;
             double z = entity.getZ() + offsetZ;
 
-            // small upward motion
+
             double dx = 0.0;
             double dy = 0.02;
             double dz = 0.0;
@@ -82,15 +85,17 @@ public class SmokingPipeItem extends Item {
         }
     }
     private void addWisdomEffect(Player player){
-        if (player.hasEffect(MobEffects.ABSORPTION)){
+        if (player.hasEffect(ModEffects.WISDOM_EFFECT)){
 
-            MobEffectInstance wisdomEffect = Objects.requireNonNull(player.getEffect(MobEffects.ABSORPTION));
+            Holder<MobEffect> wisdomEffectHolder = ModEffects.WISDOM_EFFECT;
+            MobEffectInstance wisdomEffect = Objects.requireNonNull(player.getEffect(ModEffects.WISDOM_EFFECT));
             int wisdomDuration = wisdomEffect.getDuration();
-            player.addEffect(new MobEffectInstance(MobEffects.ABSORPTION,wisdomDuration+200));
-
+            MobEffectInstance mobEffectInstance = new MobEffectInstance(ModEffects.WISDOM_EFFECT, wisdomDuration+200);
+            player.addEffect(mobEffectInstance);
         }
         else {
-            player.addEffect(new MobEffectInstance(ModEffects.WISDOM_EFFECT,200,0,false,true));
+            MobEffectInstance mobEffectInstance = new MobEffectInstance(ModEffects.WISDOM_EFFECT, 200);
+            player.addEffect(mobEffectInstance);
 
         }
     }
