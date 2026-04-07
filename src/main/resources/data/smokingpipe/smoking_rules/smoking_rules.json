@@ -1,0 +1,19 @@
+{
+  "smoking_rules": {
+    "minecraft:gunpowder": {
+      "effects": [
+        {
+          "type": "apply_effect",
+          "effect": "minecraft:speed",
+          "duration": 200,
+          "amplifier": 0,
+          "color": 8355711
+        },
+        {
+          "type": "smoking_speed",
+          "multiplier": 1.5
+        }
+      ]
+    }
+  }
+}

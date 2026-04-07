@@ -3,6 +3,8 @@ package net.cebularz.smokingpipe;
 import net.cebularz.smokingpipe.effects.ModEffects;
 import net.cebularz.smokingpipe.items.ModItems;
 import net.cebularz.smokingpipe.particles.ModParticles;
+import net.cebularz.smokingpipe.sound.ModSounds;
+import net.minecraft.world.item.CreativeModeTabs;
 import org.slf4j.Logger;
 
 import com.mojang.logging.LogUtils;
@@ -38,6 +40,7 @@ public class SmokingPipe {
         NeoForge.EVENT_BUS.register(this);
 
         modEventBus.addListener(this::addCreative);
+        ModSounds.register(modEventBus);
 
         modContainer.registerConfig(ModConfig.Type.COMMON, SmokingPipeConfig.SPEC);
     }
@@ -47,7 +50,9 @@ public class SmokingPipe {
     }
 
     private void addCreative(BuildCreativeModeTabContentsEvent event) {
-
+        if(event.getTabKey() == CreativeModeTabs.TOOLS_AND_UTILITIES) {
+            event.accept(ModItems.SMOKING_PIPE);
+        }
     }
 
     @SubscribeEvent

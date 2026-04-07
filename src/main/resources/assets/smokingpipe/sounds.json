@@ -1,0 +1,20 @@
+{
+  "smoking_pipe_use": {
+    "subtitles": "sounds.smokingpipe.smoking_pipe_use",
+    "sounds": [
+      "smokingpipe:smoking_pipe_use_0",
+      "smokingpipe:smoking_pipe_use_1",
+      "smokingpipe:smoking_pipe_use_2",
+      "smokingpipe:smoking_pipe_use_3"
+    ]
+  },
+  "smoking_pipe_puff": {
+    "subtitles": "sounds.smokingpipe.smoking_pipe_puff",
+    "sounds": [
+      "smokingpipe:smoking_pipe_puff_0",
+      "smokingpipe:smoking_pipe_puff_1",
+      "smokingpipe:smoking_pipe_puff_2",
+      "smokingpipe:smoking_pipe_puff_3"
+    ]
+  }
+}
