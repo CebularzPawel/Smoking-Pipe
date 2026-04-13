@@ -14,6 +14,80 @@
           "multiplier": 1.5
         }
       ]
+    },
+    "minecraft:blaze_powder": {
+      "effects": [
+        {
+          "type": "apply_effect",
+          "effect": "minecraft:fire_resistance",
+          "duration": 400,
+          "amplifier": 0,
+          "color": 16747520
+        },
+        {
+          "type": "apply_effect",
+          "effect": "minecraft:strength",
+          "duration": 200,
+          "amplifier": 0,
+          "color": 16747520
+        },
+        {
+          "type": "smoking_speed",
+          "multiplier": 2.0
+        }
+      ]
+    },
+    "minecraft:sugar": {
+      "effects": [
+        {
+          "type": "apply_effect",
+          "effect": "minecraft:haste",
+          "duration": 300,
+          "amplifier": 1,
+          "color": 16777215
+        },
+        {
+          "type": "smoking_speed",
+          "multiplier": 1.0
+        }
+      ]
+    },
+    "minecraft:dried_kelp": {
+      "effects": [
+        {
+          "type": "apply_effect",
+          "effect": "minecraft:water_breathing",
+          "duration": 600,
+          "amplifier": 0,
+          "color": 4678025
+        },
+        {
+          "type": "smoking_speed",
+          "multiplier": 0.75
+        }
+      ]
+    },
+    "minecraft:nether_wart": {
+      "effects": [
+        {
+          "type": "apply_effect",
+          "effect": "minecraft:regeneration",
+          "duration": 100,
+          "amplifier": 0,
+          "color": 13458603
+        },
+        {
+          "type": "apply_effect",
+          "effect": "minecraft:poison",
+          "duration": 60,
+          "amplifier": 0,
+          "color": 5149489
+        },
+        {
+          "type": "smoking_speed",
+          "multiplier": 1.0
+        }
+      ]
     }
   }
 }

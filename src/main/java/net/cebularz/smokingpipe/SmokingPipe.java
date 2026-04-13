@@ -1,5 +1,6 @@
 package net.cebularz.smokingpipe;
 
+import net.cebularz.smokingpipe.component.ModDataComponents;
 import net.cebularz.smokingpipe.effects.ModEffects;
 import net.cebularz.smokingpipe.items.ModItems;
 import net.cebularz.smokingpipe.particles.ModParticles;
@@ -24,14 +25,11 @@ public class SmokingPipe {
     public static final String MOD_ID = "smokingpipe";
     public static final Logger LOGGER = LogUtils.getLogger();
 
-
-
-
-
     public SmokingPipe(IEventBus modEventBus, ModContainer modContainer) {
         modEventBus.addListener(this::commonSetup);
 
         ModItems.register(modEventBus);
+        ModDataComponents.register(modEventBus);
 
         ModParticles.register(modEventBus);
 

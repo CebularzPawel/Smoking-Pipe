@@ -1,4 +1,7 @@
 {
   "item.smokingpipe.smoking_pipe": "Smoking Pipe",
+  "item.smokingpipe.smoking_pipe.empty": "Empty",
+  "item.smokingpipe.when_smoked": "When smoked:",
+  "tooltip.smokingpipe.smokable": "Smokable",
   "effect.smokingpipe.wisdom": "Wisdom"
 }
