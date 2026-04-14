@@ -56,14 +56,29 @@
       "effects": [
         {
           "type": "apply_effect",
-          "effect": "minecraft:water_breathing",
+          "effect": "minecraft:nausea",
           "duration": 600,
           "amplifier": 0,
           "color": 4678025
         },
         {
           "type": "smoking_speed",
-          "multiplier": 0.75
+          "multiplier": 2.0
+        }
+      ]
+    },
+    "minecraft:dried_kelp_block": {
+      "effects": [
+        {
+          "type": "apply_effect",
+          "effect": "minecraft:nausea",
+          "duration": 1200,
+          "amplifier": 2,
+          "color": 4678025
+        },
+        {
+          "type": "smoking_speed",
+          "multiplier": 0.5
         }
       ]
     },

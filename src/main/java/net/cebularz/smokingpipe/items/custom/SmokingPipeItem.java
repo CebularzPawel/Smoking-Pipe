@@ -17,6 +17,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
+import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -193,8 +194,7 @@ public class SmokingPipeItem extends Item {
     @Override
     public void onUseTick(Level level, LivingEntity entity, ItemStack stack, int remainingUseDuration) {
         if (!level.isClientSide) {
-            int effectTriggerRemaining = getUseDuration(stack, entity) - getSmokingTime(stack);
-            if (remainingUseDuration == effectTriggerRemaining) {
+            if ((getUseDuration(stack, entity) - remainingUseDuration) % getSmokingTime(stack) == 0) {
                 if (entity instanceof Player player) {
                     applySmokingEffects(player, stack);
                 }
@@ -233,12 +233,18 @@ public class SmokingPipeItem extends Item {
                     BuiltInRegistries.MOB_EFFECT
                             .getHolder(ResourceLocation.parse(applyEffect.effect))
                             .ifPresent(effectHolder -> {
-                                player.addEffect(new MobEffectInstance(effectHolder, applyEffect.duration, applyEffect.amplifier));
+                                if (player.hasEffect(effectHolder)) {
+                                    MobEffectInstance currentEffect = Objects.requireNonNull(player.getEffect(effectHolder));
+                                    player.addEffect(new MobEffectInstance(effectHolder, currentEffect.getDuration() + applyEffect.duration, applyEffect.amplifier));
+                                } else {
+                                    player.addEffect(new MobEffectInstance(effectHolder, applyEffect.duration, applyEffect.amplifier));
+                                }
                             });
+
                 }
             }
         }
-        if (SmokingPipeConfig.CONSUME_SMOKABLE_ON_USE.get()) {
+        if (SmokingPipeConfig.CONSUME_SMOKABLE_ON_USE.get() && !player.isCreative()) {
             consumeSmokable(pipeStack);
         }
     }
@@ -297,6 +303,22 @@ public class SmokingPipeItem extends Item {
             }
         }
         return 0xFFFFFF;
+    }
+    @Override
+    public boolean isBarVisible(ItemStack stack) {
+        return !getSmokable(stack).isEmpty();
+    }
+    @Override
+    public int getBarWidth(ItemStack stack) {
+        ItemStack smokable = getSmokable(stack);
+
+        if (smokable.isEmpty()) {
+            return 0;
+        }
+
+        float fill = (float) smokable.getCount() / MAX_SMOKABLE;
+
+        return Math.min(1 + Mth.floor(fill * 12), 13);
     }
 
     @Override
