@@ -1,6 +1,5 @@
 package net.cebularz.smokingpipe.items.custom;
 
-import net.cebularz.smokingpipe.SmokingPipeConfig;
 import net.cebularz.smokingpipe.component.ModDataComponents;
 import net.cebularz.smokingpipe.component.SmokableContent;
 import net.cebularz.smokingpipe.effects.ModEffects;
@@ -37,7 +36,6 @@ import java.util.Objects;
 import java.util.Optional;
 
 public class SmokingPipeItem extends Item {
-    public static final int MAX_SMOKABLE = 64;
 
     public SmokingPipeItem(Properties properties) {
         super(properties.stacksTo(1));
@@ -111,11 +109,16 @@ public class SmokingPipeItem extends Item {
         if (incoming.isEmpty()) {
             return 0;
         }
+        String itemId = BuiltInRegistries.ITEM.getKey(incoming.getItem()).toString();
+        if (!SmokingManager.isSmokable(itemId)) {
+            return 0;
+        }
         ItemStack currentSmokable = getSmokable(pipeStack);
         if (!currentSmokable.isEmpty() && !ItemStack.isSameItemSameComponents(currentSmokable, incoming)) {
             return 0;
         }
-        int availableSpace = MAX_SMOKABLE - currentSmokable.getCount();
+        int maxStack = incoming.getMaxStackSize();
+        int availableSpace = maxStack - currentSmokable.getCount();
         if (availableSpace <= 0) {
             return 0;
         }
@@ -223,8 +226,38 @@ public class SmokingPipeItem extends Item {
         }
     }
 
+    private int getPipeCharges(ItemStack pipeStack) {
+        Integer charges = pipeStack.get(ModDataComponents.PIPE_CHARGES.get());
+        if (charges != null) {
+            return charges;
+        }
+        return 0;
+    }
+
+    private void savePipeCharges(ItemStack pipeStack, int charges) {
+        if (charges <= 0) {
+            pipeStack.remove(ModDataComponents.PIPE_CHARGES.get());
+        } else {
+            pipeStack.set(ModDataComponents.PIPE_CHARGES.get(), charges);
+        }
+    }
+
     private void applySmokingEffects(Player player, ItemStack pipeStack) {
-        List<SmokingManager.SmokingEffect> effects = SmokingManager.getEffects(getSmokableId(pipeStack));
+        String smokableId = getSmokableId(pipeStack);
+
+        if (!player.isCreative() && !SmokingManager.isInfinite(smokableId)) {
+            int currentCharges = getPipeCharges(pipeStack);
+            if (currentCharges <= 0) {
+                if (getSmokable(pipeStack).isEmpty()) {
+                    return;
+                }
+                consumeSmokable(pipeStack);
+                currentCharges = SmokingManager.getCharges(smokableId);
+            }
+            savePipeCharges(pipeStack, currentCharges - 1);
+        }
+
+        List<SmokingManager.SmokingEffect> effects = SmokingManager.getEffects(smokableId);
         if (effects.isEmpty()) {
             addWisdomEffect(player);
         } else {
@@ -240,12 +273,8 @@ public class SmokingPipeItem extends Item {
                                     player.addEffect(new MobEffectInstance(effectHolder, applyEffect.duration, applyEffect.amplifier));
                                 }
                             });
-
                 }
             }
-        }
-        if (SmokingPipeConfig.CONSUME_SMOKABLE_ON_USE.get() && !player.isCreative()) {
-            consumeSmokable(pipeStack);
         }
     }
 
@@ -294,31 +323,28 @@ public class SmokingPipeItem extends Item {
 
     @Override
     public int getBarColor(ItemStack stack) {
-        for (SmokingManager.SmokingEffect effect : SmokingManager.getEffects(getSmokableId(stack))) {
-            if (effect instanceof SmokingManager.ApplyEffect applyEffect) {
-                return BuiltInRegistries.MOB_EFFECT
-                        .getHolder(ResourceLocation.parse(applyEffect.effect))
-                        .map(effectHolder -> effectHolder.value().getColor())
-                        .orElse(0xFFFFFF);
-            }
-        }
-        return 0xFFFFFF;
+        return SmokingManager.getItemColor(getSmokableId(stack));
     }
     @Override
     public boolean isBarVisible(ItemStack stack) {
-        return !getSmokable(stack).isEmpty();
+        return !getSmokable(stack).isEmpty() || getPipeCharges(stack) > 0;
     }
     @Override
     public int getBarWidth(ItemStack stack) {
-        ItemStack smokable = getSmokable(stack);
-
-        if (smokable.isEmpty()) {
+        String smokableId = getSmokableId(stack);
+        int maxCharges = SmokingManager.getCharges(smokableId);
+        if (maxCharges <= 0) {
             return 0;
         }
-
-        float fill = (float) smokable.getCount() / MAX_SMOKABLE;
-
-        return Math.min(1 + Mth.floor(fill * 12), 13);
+        int currentCharges = getPipeCharges(stack);
+        if (currentCharges <= 0) {
+            if (!getSmokable(stack).isEmpty()) {
+                return 13;
+            }
+            return 0;
+        }
+        float fillFraction = (float) currentCharges / maxCharges;
+        return Math.min(1 + Mth.floor(fillFraction * 12), 13);
     }
 
     @Override
@@ -337,24 +363,29 @@ public class SmokingPipeItem extends Item {
             return;
         }
 
-        tooltipComponents.add(Component.translatable("item.smokingpipe.when_smoked").withStyle(ChatFormatting.GRAY));
         String smokableItemId = BuiltInRegistries.ITEM.getKey(smokable.getItem()).toString();
-        for (SmokingManager.SmokingEffect effect : SmokingManager.getEffects(smokableItemId)) {
-            if (effect instanceof SmokingManager.ApplyEffect applyEffect) {
-                BuiltInRegistries.MOB_EFFECT
-                        .getHolder(ResourceLocation.parse(applyEffect.effect))
-                        .ifPresent(effectHolder -> {
-                            MutableComponent effectName = Component.translatable(effectHolder.value().getDescriptionId());
-                            if (applyEffect.amplifier > 0) {
-                                effectName = Component.translatable("potion.withAmplifier", effectName,
-                                        Component.translatable("potion.potency." + applyEffect.amplifier));
-                            }
-                            int totalSeconds = applyEffect.duration / 20;
-                            String durationText = String.format("%d:%02d", totalSeconds / 60, totalSeconds % 60);
-                            effectName = Component.translatable("potion.withDuration", effectName, durationText);
-                            tooltipComponents.add(effectName.withStyle(style ->
-                                    style.withColor(TextColor.fromRgb(effectHolder.value().getColor()))));
-                        });
+        List<SmokingManager.SmokingEffect> smokingEffects = SmokingManager.getEffects(smokableItemId);
+        boolean hasApplyEffects = smokingEffects.stream().anyMatch(smokingEffect -> smokingEffect instanceof SmokingManager.ApplyEffect);
+        if (hasApplyEffects) {
+            tooltipComponents.add(Component.translatable("item.smokingpipe.when_smoked").withStyle(ChatFormatting.GRAY));
+            int itemColor = SmokingManager.getItemColor(smokableItemId);
+            for (SmokingManager.SmokingEffect effect : smokingEffects) {
+                if (effect instanceof SmokingManager.ApplyEffect applyEffect) {
+                    BuiltInRegistries.MOB_EFFECT
+                            .getHolder(ResourceLocation.parse(applyEffect.effect))
+                            .ifPresent(effectHolder -> {
+                                MutableComponent effectName = Component.translatable(effectHolder.value().getDescriptionId());
+                                if (applyEffect.amplifier > 0) {
+                    effectName = Component.translatable("potion.withAmplifier", effectName,
+                        Component.translatable("potion.potency." + applyEffect.amplifier));
+                }
+                                int totalSeconds = applyEffect.duration / 20;
+                                String durationText = String.format("%d:%02d", totalSeconds / 60, totalSeconds % 60);
+                                effectName = Component.translatable("potion.withDuration", effectName, durationText);
+                                tooltipComponents.add(effectName.withStyle(style ->
+                                        style.withColor(TextColor.fromRgb(itemColor))));
+                            });
+                }
             }
         }
 

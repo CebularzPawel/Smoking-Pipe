@@ -1,13 +1,15 @@
 {
   "smoking_rules": {
     "minecraft:gunpowder": {
+      "color": 8355711,
+      "infinite": false,
+      "charges": 10,
       "effects": [
         {
           "type": "apply_effect",
           "effect": "minecraft:speed",
           "duration": 200,
-          "amplifier": 0,
-          "color": 8355711
+          "amplifier": 0
         },
         {
           "type": "smoking_speed",
@@ -16,20 +18,21 @@
       ]
     },
     "minecraft:blaze_powder": {
+      "color": 16747520,
+      "infinite": false,
+      "charges": 8,
       "effects": [
         {
           "type": "apply_effect",
           "effect": "minecraft:fire_resistance",
           "duration": 400,
-          "amplifier": 0,
-          "color": 16747520
+          "amplifier": 0
         },
         {
           "type": "apply_effect",
           "effect": "minecraft:strength",
           "duration": 200,
-          "amplifier": 0,
-          "color": 16747520
+          "amplifier": 0
         },
         {
           "type": "smoking_speed",
@@ -38,13 +41,15 @@
       ]
     },
     "minecraft:sugar": {
+      "color": 16777215,
+      "infinite": false,
+      "charges": 12,
       "effects": [
         {
           "type": "apply_effect",
           "effect": "minecraft:haste",
           "duration": 300,
-          "amplifier": 1,
-          "color": 16777215
+          "amplifier": 1
         },
         {
           "type": "smoking_speed",
@@ -53,13 +58,15 @@
       ]
     },
     "minecraft:dried_kelp": {
+      "color": 4678025,
+      "infinite": false,
+      "charges": 6,
       "effects": [
         {
           "type": "apply_effect",
           "effect": "minecraft:nausea",
           "duration": 600,
-          "amplifier": 0,
-          "color": 4678025
+          "amplifier": 0
         },
         {
           "type": "smoking_speed",
@@ -68,13 +75,15 @@
       ]
     },
     "minecraft:dried_kelp_block": {
+      "color": 4678025,
+      "infinite": false,
+      "charges": 20,
       "effects": [
         {
           "type": "apply_effect",
           "effect": "minecraft:nausea",
           "duration": 1200,
-          "amplifier": 2,
-          "color": 4678025
+          "amplifier": 2
         },
         {
           "type": "smoking_speed",
@@ -83,20 +92,21 @@
       ]
     },
     "minecraft:nether_wart": {
+      "color": 13458603,
+      "infinite": false,
+      "charges": 8,
       "effects": [
         {
           "type": "apply_effect",
           "effect": "minecraft:regeneration",
           "duration": 100,
-          "amplifier": 0,
-          "color": 13458603
+          "amplifier": 0
         },
         {
           "type": "apply_effect",
           "effect": "minecraft:poison",
           "duration": 60,
-          "amplifier": 0,
-          "color": 5149489
+          "amplifier": 0
         },
         {
           "type": "smoking_speed",
