@@ -227,11 +227,12 @@ public class SmokingPipeItem extends Item {
     }
 
     private int getPipeCharges(ItemStack pipeStack) {
-        Integer charges = pipeStack.get(ModDataComponents.PIPE_CHARGES.get());
-        if (charges != null) {
-            return charges;
-        }
-        return 0;
+        //Integer charges = pipeStack.get(ModDataComponents.PIPE_CHARGES.get());
+        //if (charges != null) {
+            //return charges;
+        //}
+        //return 0;
+        return 1;
     }
 
     private void savePipeCharges(ItemStack pipeStack, int charges) {
@@ -327,24 +328,19 @@ public class SmokingPipeItem extends Item {
     }
     @Override
     public boolean isBarVisible(ItemStack stack) {
-        return !getSmokable(stack).isEmpty() || getPipeCharges(stack) > 0;
+        return !getSmokable(stack).isEmpty();
     }
     @Override
     public int getBarWidth(ItemStack stack) {
-        String smokableId = getSmokableId(stack);
-        int maxCharges = SmokingManager.getCharges(smokableId);
-        if (maxCharges <= 0) {
+        ItemStack smokable = getSmokable(stack);
+
+        if (smokable.isEmpty()) {
             return 0;
         }
-        int currentCharges = getPipeCharges(stack);
-        if (currentCharges <= 0) {
-            if (!getSmokable(stack).isEmpty()) {
-                return 13;
-            }
-            return 0;
-        }
-        float fillFraction = (float) currentCharges / maxCharges;
-        return Math.min(1 + Mth.floor(fillFraction * 12), 13);
+
+        float fill = (float) smokable.getCount() / DEFAULT_MAX_STACK_SIZE;
+
+        return Math.min(1 + Mth.floor(fill * 12), 13);
     }
 
     @Override
