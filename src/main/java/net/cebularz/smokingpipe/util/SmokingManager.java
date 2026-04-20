@@ -8,7 +8,6 @@ import net.minecraft.util.GsonHelper;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.event.AddReloadListenerEvent;
 
 import java.util.*;
@@ -37,8 +36,7 @@ public class SmokingManager extends SimpleJsonResourceReloadListener {
 
                 int color = GsonHelper.getAsInt(itemObj, "color", 0xFFFFFF);
                 boolean infinite = GsonHelper.getAsBoolean(itemObj, "infinite", false);
-                int charges = GsonHelper.getAsInt(itemObj, "charges", 1);
-                ITEM_RULES.put(itemId, new ItemRule(color, infinite, charges));
+                ITEM_RULES.put(itemId, new ItemRule(color, infinite));
 
                 JsonArray effectsArray = GsonHelper.getAsJsonArray(itemObj, "effects");
                 List<SmokingEffect> effectsList = new ArrayList<>();
@@ -91,53 +89,21 @@ public class SmokingManager extends SimpleJsonResourceReloadListener {
         return rule != null && rule.infinite;
     }
 
-    public static int getCharges(String itemId) {
-        ItemRule rule = ITEM_RULES.get(itemId);
-        return rule != null ? rule.charges : 1;
-    }
-
-
-    public static class ItemRule {
-        public final int color;
-        public final boolean infinite;
-        public final int charges;
-
-        public ItemRule(int color, boolean infinite, int charges) {
-            this.color = color;
-            this.infinite = infinite;
-            this.charges = charges;
-        }
-    }
-
+    public record ItemRule(int color, boolean infinite) {}
     public interface SmokingEffect {}
-
-    public static class ApplyEffect implements SmokingEffect {
-        public final String effect;
-        public final int duration;
-        public final int amplifier;
-
-        public ApplyEffect(String effect, int duration, int amplifier) {
-            this.effect = effect;
-            this.duration = duration;
-            this.amplifier = amplifier;
-        }
+    public record ApplyEffect(String effect, int duration, int amplifier) implements SmokingEffect {
 
         @Override
-        public String toString() {
-            return "ApplyEffect{" + effect + ", " + duration + ", " + amplifier + "}";
+            public String toString() {
+                return "ApplyEffect{" + effect + ", " + duration + ", " + amplifier + "}";
+            }
         }
-    }
 
-    public static class SmokingSpeed implements SmokingEffect {
-        public final float multiplier;
-
-        public SmokingSpeed(float multiplier) {
-            this.multiplier = multiplier;
-        }
+    public record SmokingSpeed(float multiplier) implements SmokingEffect {
 
         @Override
-        public String toString() {
-            return "SmokingSpeed{" + multiplier + "}";
+            public String toString() {
+                return "SmokingSpeed{" + multiplier + "}";
+            }
         }
-    }
 }

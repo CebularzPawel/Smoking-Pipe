@@ -3,7 +3,6 @@
     "minecraft:gunpowder": {
       "color": 8355711,
       "infinite": false,
-      "charges": 10,
       "effects": [
         {
           "type": "apply_effect",
@@ -20,7 +19,6 @@
     "minecraft:blaze_powder": {
       "color": 16747520,
       "infinite": false,
-      "charges": 8,
       "effects": [
         {
           "type": "apply_effect",
@@ -43,7 +41,6 @@
     "minecraft:sugar": {
       "color": 16777215,
       "infinite": false,
-      "charges": 12,
       "effects": [
         {
           "type": "apply_effect",
@@ -60,7 +57,6 @@
     "minecraft:dried_kelp": {
       "color": 4678025,
       "infinite": false,
-      "charges": 6,
       "effects": [
         {
           "type": "apply_effect",
@@ -77,7 +73,6 @@
     "minecraft:dried_kelp_block": {
       "color": 4678025,
       "infinite": false,
-      "charges": 20,
       "effects": [
         {
           "type": "apply_effect",
@@ -94,7 +89,6 @@
     "minecraft:nether_wart": {
       "color": 13458603,
       "infinite": false,
-      "charges": 8,
       "effects": [
         {
           "type": "apply_effect",

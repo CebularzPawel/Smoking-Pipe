@@ -1,5 +1,6 @@
 package net.cebularz.smokingpipe.items.custom;
 
+import net.cebularz.smokingpipe.SmokingPipeConfig;
 import net.cebularz.smokingpipe.component.ModDataComponents;
 import net.cebularz.smokingpipe.component.SmokableContent;
 import net.cebularz.smokingpipe.effects.ModEffects;
@@ -226,55 +227,28 @@ public class SmokingPipeItem extends Item {
         }
     }
 
-    private int getPipeCharges(ItemStack pipeStack) {
-        Integer charges = pipeStack.get(ModDataComponents.PIPE_CHARGES.get());
-        if (charges != null) {
-            return charges;
-        }
-        return 0;
-    }
-
-    private void savePipeCharges(ItemStack pipeStack, int charges) {
-        if (charges <= 0) {
-            pipeStack.remove(ModDataComponents.PIPE_CHARGES.get());
-        } else {
-            pipeStack.set(ModDataComponents.PIPE_CHARGES.get(), charges);
-        }
-    }
-
     private void applySmokingEffects(Player player, ItemStack pipeStack) {
-        String smokableId = getSmokableId(pipeStack);
-
-        if (!player.isCreative() && !SmokingManager.isInfinite(smokableId)) {
-            int currentCharges = getPipeCharges(pipeStack);
-            if (currentCharges <= 0) {
-                if (getSmokable(pipeStack).isEmpty()) {
-                    return;
-                }
-                consumeSmokable(pipeStack);
-                currentCharges = SmokingManager.getCharges(smokableId);
-            }
-            savePipeCharges(pipeStack, currentCharges - 1);
-        }
-
-        List<SmokingManager.SmokingEffect> effects = SmokingManager.getEffects(smokableId);
+        List<SmokingManager.SmokingEffect> effects = SmokingManager.getEffects(getSmokableId(pipeStack));
         if (effects.isEmpty()) {
             addWisdomEffect(player);
         } else {
             for (SmokingManager.SmokingEffect effect : effects) {
                 if (effect instanceof SmokingManager.ApplyEffect applyEffect) {
                     BuiltInRegistries.MOB_EFFECT
-                            .getHolder(ResourceLocation.parse(applyEffect.effect))
+                            .getHolder(ResourceLocation.parse(applyEffect.effect()))
                             .ifPresent(effectHolder -> {
                                 if (player.hasEffect(effectHolder)) {
                                     MobEffectInstance currentEffect = Objects.requireNonNull(player.getEffect(effectHolder));
-                                    player.addEffect(new MobEffectInstance(effectHolder, currentEffect.getDuration() + applyEffect.duration, applyEffect.amplifier));
+                                    player.addEffect(new MobEffectInstance(effectHolder, currentEffect.getDuration() + applyEffect.duration(), applyEffect.amplifier()));
                                 } else {
-                                    player.addEffect(new MobEffectInstance(effectHolder, applyEffect.duration, applyEffect.amplifier));
+                                    player.addEffect(new MobEffectInstance(effectHolder, applyEffect.duration(), applyEffect.amplifier()));
                                 }
                             });
                 }
             }
+        }
+        if (SmokingPipeConfig.CONSUME_SMOKABLE_ON_USE.get() && !player.isCreative() && !SmokingManager.isInfinite(getSmokableId(pipeStack))) {
+            consumeSmokable(pipeStack);
         }
     }
 
@@ -293,7 +267,7 @@ public class SmokingPipeItem extends Item {
     private int getSmokingTime(ItemStack pipeStack) {
         for (SmokingManager.SmokingEffect effect : SmokingManager.getEffects(getSmokableId(pipeStack))) {
             if (effect instanceof SmokingManager.SmokingSpeed smokingSpeed) {
-                return Math.max(1, (int) (40 / smokingSpeed.multiplier));
+                return Math.max(1, (int) (40 / smokingSpeed.multiplier()));
             }
         }
         return 40;
@@ -327,23 +301,15 @@ public class SmokingPipeItem extends Item {
     }
     @Override
     public boolean isBarVisible(ItemStack stack) {
-        return !getSmokable(stack).isEmpty() || getPipeCharges(stack) > 0;
+        return !getSmokable(stack).isEmpty();
     }
     @Override
     public int getBarWidth(ItemStack stack) {
-        String smokableId = getSmokableId(stack);
-        int maxCharges = SmokingManager.getCharges(smokableId);
-        if (maxCharges <= 0) {
+        ItemStack smokable = getSmokable(stack);
+        if (smokable.isEmpty()) {
             return 0;
         }
-        int currentCharges = getPipeCharges(stack);
-        if (currentCharges <= 0) {
-            if (!getSmokable(stack).isEmpty()) {
-                return 13;
-            }
-            return 0;
-        }
-        float fillFraction = (float) currentCharges / maxCharges;
+        float fillFraction = (float) smokable.getCount() / smokable.getMaxStackSize();
         return Math.min(1 + Mth.floor(fillFraction * 12), 13);
     }
 
@@ -372,14 +338,14 @@ public class SmokingPipeItem extends Item {
             for (SmokingManager.SmokingEffect effect : smokingEffects) {
                 if (effect instanceof SmokingManager.ApplyEffect applyEffect) {
                     BuiltInRegistries.MOB_EFFECT
-                            .getHolder(ResourceLocation.parse(applyEffect.effect))
+                            .getHolder(ResourceLocation.parse(applyEffect.effect()))
                             .ifPresent(effectHolder -> {
                                 MutableComponent effectName = Component.translatable(effectHolder.value().getDescriptionId());
-                                if (applyEffect.amplifier > 0) {
+                                if (applyEffect.amplifier() > 0) {
                     effectName = Component.translatable("potion.withAmplifier", effectName,
-                        Component.translatable("potion.potency." + applyEffect.amplifier));
+                        Component.translatable("potion.potency." + applyEffect.amplifier()));
                 }
-                                int totalSeconds = applyEffect.duration / 20;
+                                int totalSeconds = applyEffect.duration() / 20;
                                 String durationText = String.format("%d:%02d", totalSeconds / 60, totalSeconds % 60);
                                 effectName = Component.translatable("potion.withDuration", effectName, durationText);
                                 tooltipComponents.add(effectName.withStyle(style ->
