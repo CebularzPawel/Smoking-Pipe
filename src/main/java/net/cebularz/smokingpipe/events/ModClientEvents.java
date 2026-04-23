@@ -31,16 +31,13 @@ public class ModClientEvents {
 
     @SubscribeEvent
     public static void onItemTooltip(ItemTooltipEvent event) {
-        String itemId = BuiltInRegistries.ITEM.getKey(event.getItemStack().getItem()).toString();
-        if (!SmokingManager.getEffects(itemId).isEmpty()) {
-            if (SmokingManager.isInfinite(itemId)){
-                event.getToolTip().add(Component.translatable("tooltip.smokingpipe.smokable_infinite")
-                        .withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC));
-            }
-            else {
-                event.getToolTip().add(Component.translatable("tooltip.smokingpipe.smokable")
-                        .withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC));
-            }
+        var itemId = BuiltInRegistries.ITEM.getKey(event.getItemStack().getItem());
+        if (SmokingManager.isSmokable(itemId)) {
+            event.getToolTip().add(
+                    Component.translatable(
+                            SmokingManager.isInfinite(itemId) ? "tooltip.smokingpipe.smokable_infinite" : "tooltip.smokingpipe.smokable"
+                    ).withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC)
+            );
         }
     }
 }

@@ -110,7 +110,7 @@ public class SmokingPipeItem extends Item {
         if (incoming.isEmpty()) {
             return 0;
         }
-        String itemId = BuiltInRegistries.ITEM.getKey(incoming.getItem()).toString();
+        ResourceLocation itemId = BuiltInRegistries.ITEM.getKey(incoming.getItem());
         if (!SmokingManager.isSmokable(itemId)) {
             return 0;
         }
@@ -271,12 +271,12 @@ public class SmokingPipeItem extends Item {
         return 40;
     }
 
-    private String getSmokableId(ItemStack pipeStack) {
+    private ResourceLocation getSmokableId(ItemStack pipeStack) {
         ItemStack smokable = getSmokable(pipeStack);
         if (smokable.isEmpty()) {
-            return "";
+            return null;
         }
-        return BuiltInRegistries.ITEM.getKey(smokable.getItem()).toString();
+        return BuiltInRegistries.ITEM.getKey(smokable.getItem());
     }
 
 
@@ -320,7 +320,7 @@ public class SmokingPipeItem extends Item {
             return;
         }
 
-        String smokableItemId = BuiltInRegistries.ITEM.getKey(smokable.getItem()).toString();
+        ResourceLocation smokableItemId = BuiltInRegistries.ITEM.getKey(smokable.getItem());
         List<SmokingManager.SmokingEffect> smokingEffects = SmokingManager.getEffects(smokableItemId);
         boolean hasApplyEffects = smokingEffects.stream().anyMatch(smokingEffect -> smokingEffect instanceof SmokingManager.ApplyEffect);
         if (hasApplyEffects) {

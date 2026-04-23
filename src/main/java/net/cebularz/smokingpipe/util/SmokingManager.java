@@ -15,8 +15,8 @@ import java.util.*;
 @EventBusSubscriber(modid = "smokingpipe")
 public class SmokingManager extends SimpleJsonResourceReloadListener {
 
-    private static final Map<String, List<SmokingEffect>> SMOKING_RULES = new HashMap<>();
-    private static final Map<String, ItemRule> ITEM_RULES = new HashMap<>();
+    private static final Map<ResourceLocation, List<SmokingEffect>> SMOKING_RULES = new HashMap<>();
+    private static final Map<ResourceLocation, ItemRule> ITEM_RULES = new HashMap<>();
 
     public SmokingManager() {
         super(new Gson(), "smoking_rules");
@@ -32,11 +32,12 @@ public class SmokingManager extends SimpleJsonResourceReloadListener {
             JsonObject rules = GsonHelper.getAsJsonObject(root, "smoking_rules");
 
             for (String itemId : rules.keySet()) {
+                ResourceLocation itemKey = ResourceLocation.parse(itemId);
                 JsonObject itemObj = rules.getAsJsonObject(itemId);
 
                 int color = GsonHelper.getAsInt(itemObj, "color", 0xFFFFFF);
                 boolean infinite = GsonHelper.getAsBoolean(itemObj, "infinite", false);
-                ITEM_RULES.put(itemId, new ItemRule(color, infinite));
+                ITEM_RULES.put(itemKey, new ItemRule(color, infinite));
 
                 JsonArray effectsArray = GsonHelper.getAsJsonArray(itemObj, "effects");
                 List<SmokingEffect> effectsList = new ArrayList<>();
@@ -59,7 +60,7 @@ public class SmokingManager extends SimpleJsonResourceReloadListener {
                     }
                 }
 
-                SMOKING_RULES.put(itemId, effectsList);
+                SMOKING_RULES.put(itemKey, effectsList);
             }
         }
 
@@ -71,20 +72,20 @@ public class SmokingManager extends SimpleJsonResourceReloadListener {
         event.addListener(new SmokingManager());
     }
 
-    public static boolean isSmokable(String itemId) {
-        return SMOKING_RULES.containsKey(itemId);
+    public static boolean isSmokable(ResourceLocation itemId) {
+        return itemId != null && SMOKING_RULES.containsKey(itemId);
     }
 
-    public static List<SmokingEffect> getEffects(String itemId) {
-        return SMOKING_RULES.getOrDefault(itemId, Collections.emptyList());
+    public static List<SmokingEffect> getEffects(ResourceLocation itemId) {
+        return itemId == null ? Collections.emptyList() : SMOKING_RULES.getOrDefault(itemId, Collections.emptyList());
     }
 
-    public static int getItemColor(String itemId) {
+    public static int getItemColor(ResourceLocation itemId) {
         ItemRule rule = ITEM_RULES.get(itemId);
         return rule != null ? rule.color : 0xFFFFFF;
     }
 
-    public static boolean isInfinite(String itemId) {
+    public static boolean isInfinite(ResourceLocation itemId) {
         ItemRule rule = ITEM_RULES.get(itemId);
         return rule != null && rule.infinite;
     }
