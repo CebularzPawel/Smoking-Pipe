@@ -33,8 +33,14 @@ public class ModClientEvents {
     public static void onItemTooltip(ItemTooltipEvent event) {
         String itemId = BuiltInRegistries.ITEM.getKey(event.getItemStack().getItem()).toString();
         if (!SmokingManager.getEffects(itemId).isEmpty()) {
-            event.getToolTip().add(Component.translatable("tooltip.smokingpipe.smokable")
-                    .withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC));
+            if (SmokingManager.isInfinite(itemId)){
+                event.getToolTip().add(Component.translatable("tooltip.smokingpipe.smokable_infinite")
+                        .withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC));
+            }
+            else {
+                event.getToolTip().add(Component.translatable("tooltip.smokingpipe.smokable")
+                        .withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC));
+            }
         }
     }
 }

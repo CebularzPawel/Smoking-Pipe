@@ -229,9 +229,7 @@ public class SmokingPipeItem extends Item {
 
     private void applySmokingEffects(Player player, ItemStack pipeStack) {
         List<SmokingManager.SmokingEffect> effects = SmokingManager.getEffects(getSmokableId(pipeStack));
-        if (effects.isEmpty()) {
-            addWisdomEffect(player);
-        } else {
+        if (!effects.isEmpty()) {
             for (SmokingManager.SmokingEffect effect : effects) {
                 if (effect instanceof SmokingManager.ApplyEffect applyEffect) {
                     BuiltInRegistries.MOB_EFFECT
@@ -281,14 +279,7 @@ public class SmokingPipeItem extends Item {
         return BuiltInRegistries.ITEM.getKey(smokable.getItem()).toString();
     }
 
-    private void addWisdomEffect(Player player) {
-        if (player.hasEffect(ModEffects.WISDOM_EFFECT)) {
-            MobEffectInstance currentWisdomEffect = Objects.requireNonNull(player.getEffect(ModEffects.WISDOM_EFFECT));
-            player.addEffect(new MobEffectInstance(ModEffects.WISDOM_EFFECT, currentWisdomEffect.getDuration() + 300));
-        } else {
-            player.addEffect(new MobEffectInstance(ModEffects.WISDOM_EFFECT, 300));
-        }
-    }
+
 
     @Override
     public boolean shouldCauseReequipAnimation(ItemStack oldStack, ItemStack newStack, boolean slotChanged) {

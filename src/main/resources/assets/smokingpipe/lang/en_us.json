@@ -1,7 +1,9 @@
 {
   "item.smokingpipe.smoking_pipe": "Smoking Pipe",
+  "item.smokingpipe.leaf_of_wisdom": "Leaf of Wisdom",
   "item.smokingpipe.smoking_pipe.empty": "Empty",
   "item.smokingpipe.when_smoked": "When smoked:",
   "tooltip.smokingpipe.smokable": "Smokable",
+  "tooltip.smokingpipe.smokable_infinite": "Smokable (Infinite)",
   "effect.smokingpipe.wisdom": "Wisdom"
 }

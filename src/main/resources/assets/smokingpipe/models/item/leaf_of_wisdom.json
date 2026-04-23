@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "smokingpipe:item/leaf_of_wisdom"
+  }
+}

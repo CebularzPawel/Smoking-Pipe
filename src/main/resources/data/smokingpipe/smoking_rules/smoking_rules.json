@@ -1,21 +1,5 @@
 {
   "smoking_rules": {
-    "minecraft:gunpowder": {
-      "color": 8355711,
-      "infinite": false,
-      "effects": [
-        {
-          "type": "apply_effect",
-          "effect": "minecraft:speed",
-          "duration": 200,
-          "amplifier": 0
-        },
-        {
-          "type": "smoking_speed",
-          "multiplier": 1.5
-        }
-      ]
-    },
     "minecraft:blaze_powder": {
       "color": 16747520,
       "infinite": false,
@@ -44,13 +28,13 @@
       "effects": [
         {
           "type": "apply_effect",
-          "effect": "minecraft:haste",
-          "duration": 300,
-          "amplifier": 1
+          "effect": "minecraft:speed",
+          "duration": 280,
+          "amplifier": 0
         },
         {
           "type": "smoking_speed",
-          "multiplier": 1.0
+          "multiplier": 1.5
         }
       ]
     },
@@ -100,6 +84,22 @@
           "type": "apply_effect",
           "effect": "minecraft:poison",
           "duration": 60,
+          "amplifier": 0
+        },
+        {
+          "type": "smoking_speed",
+          "multiplier": 1.0
+        }
+      ]
+    },
+    "smokingpipe:leaf_of_wisdom": {
+      "color": 15728476,
+      "infinite": true,
+      "effects": [
+        {
+          "type": "apply_effect",
+          "effect": "smokingpipe:wisdom",
+          "duration": 200,
           "amplifier": 0
         },
         {

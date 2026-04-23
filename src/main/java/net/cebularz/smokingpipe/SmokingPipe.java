@@ -51,6 +51,9 @@ public class SmokingPipe {
         if(event.getTabKey() == CreativeModeTabs.TOOLS_AND_UTILITIES) {
             event.accept(ModItems.SMOKING_PIPE);
         }
+        if(event.getTabKey() == CreativeModeTabs.FOOD_AND_DRINKS) {
+            event.accept(ModItems.LEAF_OF_WISDOM);
+        }
     }
 
     @SubscribeEvent
