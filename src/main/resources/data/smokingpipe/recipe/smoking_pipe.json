@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "#": {
+      "tag": "minecraft:planks"
+    },
+    "s": {
+      "item": "minecraft:stick"
+    },
+    "g": {
+      "item": "minecraft:gunpowder"
+    }
+  },
+  "pattern": [
+    "  s",
+    "#g#",
+    " # "
+  ],
+  "result": {
+    "count": 1,
+    "id": "smokingpipe:smoking_pipe"
+  }
+}

@@ -37,7 +37,7 @@ public class ModEvents {
 
         rareTrades.add((entity, randomSource) -> new MerchantOffer(
                 new ItemCost(Items.EMERALD, 32),
-                new ItemStack(ModItems.SMOKING_PIPE.get(), 1), 1, 10, 0.2f));
+                new ItemStack(ModItems.LEAF_OF_WISDOM.get(), 1), 1, 10, 0.2f));
 
     }
 }
